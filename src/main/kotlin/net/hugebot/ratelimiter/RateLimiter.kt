@@ -12,6 +12,7 @@ class RateLimiter private constructor(
 
     fun getRateLimited(id: Long) = store[id]
 
+    @Synchronized
     fun isRateLimited(id: Long): Boolean {
         return try {
             val data = store[id]
