@@ -1,17 +1,23 @@
 package net.hugebot.ratelimiter
 
-import java.util.concurrent.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 class RateLimiter private constructor(
-    internal val executor: ScheduledExecutorService,
-    internal val quota: Int,
-    internal val expirationTime: Long,
-    internal val unit: TimeUnit
-){
+        internal val executor: ScheduledExecutorService,
+        internal val quota: Int,
+        internal val expirationTime: Long,
+        internal val unit: TimeUnit
+) {
     internal val store: ConcurrentHashMap<Long, Bucket> = ConcurrentHashMap()
 
     fun getRateLimited(id: Long) = store[id]
 
+    /**
+     * Check if an (User or Guild) id is ratelimired
+     */
     @Synchronized
     fun isRateLimited(id: Long): Boolean {
         return try {
@@ -29,6 +35,14 @@ class RateLimiter private constructor(
         }
     }
 
+    /**
+     * Build a new RateLimiter instance
+     *
+     * @param quota             The number of events allowed within the time period
+     * @param expirationTime    Bucket life time
+     * @param unit              Bucket life time unit
+     * @param executor          ScheduledExecutorServices used so that each bucket can self-delete itself
+     */
     class Builder {
         private var quota: Int = 45
         private var expirationTime: Long = 60L
