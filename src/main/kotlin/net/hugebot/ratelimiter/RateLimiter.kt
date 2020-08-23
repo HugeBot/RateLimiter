@@ -16,7 +16,7 @@ class RateLimiter private constructor(
     fun getRateLimited(id: Long) = store[id]
 
     /**
-     * Check if an (User or Guild) id is ratelimired
+     * Check if an (User or Guild) id is rate limited
      */
     @Synchronized
     fun isRateLimited(id: Long): Boolean {
