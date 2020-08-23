@@ -13,7 +13,7 @@ class RateLimiter private constructor(
 ) {
     internal val store: ConcurrentHashMap<Long, Bucket> = ConcurrentHashMap()
 
-    fun getRateLimited(id: Long) = store[id]
+    operator fun get(id: Long) = store[id]
 
     /**
      * Check if an (User or Guild) id is rate limited
