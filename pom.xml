@@ -5,7 +5,7 @@
 
     <groupId>net.hugebot</groupId>
     <artifactId>RateLimiter</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>RateLimiter</name>
@@ -66,5 +66,13 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Hugebot Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/Hugebot/RateLimiter</url>
+        </repository>
+    </distributionManagement>
 
 </project>
