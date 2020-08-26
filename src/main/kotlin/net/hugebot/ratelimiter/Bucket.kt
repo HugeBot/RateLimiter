@@ -25,7 +25,7 @@ data class Bucket(
         }, expirationTime, unit)
     }
 
-    fun isExceded(): Boolean = exceded
+    fun isExceeded(): Boolean = exceded
 
     fun hit(): Boolean {
         if (exceded) return true

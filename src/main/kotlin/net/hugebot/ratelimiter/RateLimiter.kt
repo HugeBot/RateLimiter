@@ -24,7 +24,7 @@ class RateLimiter private constructor(
     fun isRateLimited(id: Long): Boolean = getBucket(id).hit()
 
     @Synchronized
-    fun isExceded(id: Long): Boolean = getBucket(id).isExceded()
+    fun isExceeded(id: Long): Boolean = getBucket(id).isExceeded()
 
     /**
      * Build a new RateLimiter instance
