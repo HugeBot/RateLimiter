@@ -1,5 +1,7 @@
-# RateLimiter
+# RateLimiter 
 Command Rate Limiter used by HUGE bot
+
+[![Download](https://api.bintray.com/packages/hugebot/RateLimiter/RateLimiter/images/download.svg?version=v1.0.0) ](https://bintray.com/hugebot/RateLimiter/RateLimiter/v1.0.0/link)
 
 Easy implementation ``(JDA)``:
 ```kotlin
