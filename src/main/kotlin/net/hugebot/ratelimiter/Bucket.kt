@@ -1,8 +1,10 @@
 package net.hugebot.ratelimiter
 
+import java.util.concurrent.atomic.AtomicInteger
+
 data class Bucket(
-    private val limiter: RateLimiter,
-    val key: Long
+        private val limiter: RateLimiter,
+        val key: Long
 ) {
     private val store = limiter.store
     private val executor = limiter.executor
@@ -10,10 +12,8 @@ data class Bucket(
     private val expirationTime = limiter.expirationTime
     private val unit = limiter.unit
 
-    var exceded: Boolean = false
-        private set
-    var count: Int = 1
-        private set
+    private var exceded: Boolean = false
+    private var count: AtomicInteger = AtomicInteger(0)
 
     init {
         executor.schedule({
@@ -25,12 +25,12 @@ data class Bucket(
         }, expirationTime, unit)
     }
 
+    fun isExceded(): Boolean = exceded
+
     fun hit(): Boolean {
         if (exceded) return true
 
-        count++
-
-        if (count >= quota) {
+        if (count.incrementAndGet() >= quota) {
             exceded = true
             return true
         }

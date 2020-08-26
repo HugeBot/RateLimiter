@@ -13,27 +13,18 @@ class RateLimiter private constructor(
 ) {
     internal val store: ConcurrentHashMap<Long, Bucket> = ConcurrentHashMap()
 
-    operator fun get(id: Long) = store[id]
+    private fun getBucket(id: Long) = store.computeIfAbsent(id) {
+        Bucket(this, id)
+    }
 
     /**
      * Check if an (User or Guild) id is rate limited
      */
     @Synchronized
-    fun isRateLimited(id: Long): Boolean {
-        return try {
-            val data = store[id]
+    fun isRateLimited(id: Long): Boolean = getBucket(id).hit()
 
-            if (data != null) data.hit()
-            else {
-                store[id] = Bucket(this, id)
-                false
-            }
-
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
-            false
-        }
-    }
+    @Synchronized
+    fun isExceded(id: Long): Boolean = getBucket(id).isExceded()
 
     /**
      * Build a new RateLimiter instance
