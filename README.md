@@ -1,5 +1,7 @@
-# RateLimiter
+# RateLimiter 
 Command Rate Limiter used by HUGE bot
+
+[![Download](https://api.bintray.com/packages/hugebot/RateLimiter/RateLimiter/images/download.svg?version=v1.0.0) ](https://bintray.com/hugebot/RateLimiter/RateLimiter/v1.0.0/link)
 
 Easy implementation ``(JDA)``:
 ```kotlin
@@ -10,10 +12,10 @@ class MyMessageListener : ListenerAdapter() {
         // Get the user ID
         val userId = event.author.idLong
         
-        // Ignore the user if the user has exceeded the limit
-        if (rateLimiter[userId]?.exceded == true) return
+        // Ignore if the user has exceeded the limit ``(>45 events)``
+        if (rateLimiter.isExceeded(userId)) return
         
-        // Take an action if the user has reached the limit but has not yet exceeded it
+        // Take an action if the user has reached the limit but has not yet exceeded it ``(==45 events)``
         if (rateLimiter.isRateLimited(userId)) return event.channel.sendMessage("<@!$userId>,  you are exceeding the limits...").queue()
         
         // Follow with the workflow
