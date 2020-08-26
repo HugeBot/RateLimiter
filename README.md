@@ -1,6 +1,8 @@
 # RateLimiter 
 Command Rate Limiter used by HUGE bot
 
+![](ratelimiter.jpg)
+
 Easy implementation ``(JDA)``:
 ```kotlin
 
