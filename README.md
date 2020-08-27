@@ -1,4 +1,8 @@
 # RateLimiter 
+[![](https://www.jitpack.io/v/net.hugebot/RateLimiter.svg)](https://www.jitpack.io/#net.hugebot/RateLimiter) 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Hugebot/RateLimiter/Maven%20Package)
+![Discord](https://img.shields.io/discord/425661010662260736?logo=discord)
+
 Command Rate Limiter used by HUGE bot
 
 ## How to install?
