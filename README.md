@@ -1,6 +1,36 @@
 # RateLimiter 
 Command Rate Limiter used by HUGE bot
 
+## How to install?
+You have two repositories available to download the library **JitPack** or **GitHub Maven Registry**.
+
+### Gradle Implementation
+```gradle
+repositories {
+    jcenter()
+    
+    // This one for Jitpack
+    maven { url 'https://jitpack.io' }
+    
+    // This one for GitHub Maven Registry
+    maven {
+        url 'https://maven.pkg.github.com/Hugebot/RateLimiter'
+        credentials {
+            username = secrets["gpr.user"]
+            password = secrets["gpr.key"]
+        }
+    }
+}
+```
+
+```gradle
+dependencies {
+    implementation 'net.hugebot:RateLimiter:v1.0.0'
+}
+```
+
+## Usage Example
+
 ![](ratelimiter.jpg)
 
 Easy implementation ``(JDA)``:
@@ -36,6 +66,3 @@ class MyMessageListener : ListenerAdapter() {
     }
 }
 ```
-
-
-Enjoy!!
