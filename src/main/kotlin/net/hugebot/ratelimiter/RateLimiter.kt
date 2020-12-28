@@ -3,6 +3,8 @@
 package net.hugebot.ratelimiter
 
 import java.util.concurrent.*
+import java.util.logging.Level
+import java.util.logging.Logger
 
 class RateLimiter private constructor(
     internal val executor: ScheduledExecutorService,
@@ -34,6 +36,7 @@ class RateLimiter private constructor(
      */
     internal fun emitBucketExceededEvent(id: Long) {
         forkJoinPool.execute {
+            logger.log(Level.FINE, "Bucket with id $id was exceeded.")
             listeners.forEach {
                 it.onBucketExceeded(id)
             }
@@ -47,6 +50,7 @@ class RateLimiter private constructor(
      */
     internal fun emitBucketCreationEvent(id: Long) {
         forkJoinPool.execute {
+            logger.log(Level.FINE, "Bucket with id $id was created.")
             listeners.forEach {
                 it.onBucketCreation(id)
             }
@@ -91,5 +95,9 @@ class RateLimiter private constructor(
 
             return RateLimiter(executor!!, quota, expirationTime, unit, listeners)
         }
+    }
+
+    companion object {
+        private val logger = Logger.getLogger("RateLimiter")
     }
 }
