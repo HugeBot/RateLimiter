@@ -1,17 +1,18 @@
+@file:Suppress("unused")
+
 package net.hugebot.ratelimiter
 
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 
 class RateLimiter private constructor(
-        internal val executor: ScheduledExecutorService,
-        internal val quota: Int,
-        internal val expirationTime: Long,
-        internal val unit: TimeUnit
+    internal val executor: ScheduledExecutorService,
+    internal val quota: Int,
+    internal val expirationTime: Long,
+    internal val unit: TimeUnit,
+    private val listeners: List<ListenerAdapter>
 ) {
     internal val store: ConcurrentHashMap<Long, Bucket> = ConcurrentHashMap()
+    private val forkJoinPool = ForkJoinPool.commonPool()
 
     private fun getBucket(id: Long) = store.computeIfAbsent(id) {
         Bucket(this, id)
@@ -27,18 +28,42 @@ class RateLimiter private constructor(
     fun isExceeded(id: Long): Boolean = getBucket(id).isExceeded()
 
     /**
+     * Emit a bucket exceeded event.
+     *
+     * @param id The bucket id
+     */
+    internal fun emitBucketExceededEvent(id: Long) {
+        forkJoinPool.execute {
+            listeners.forEach {
+                it.onBucketExceeded(id)
+            }
+        }
+    }
+
+    /**
+     * Emit a bucket creation event.
+     *
+     * @param id The bucket id
+     */
+    internal fun emitBucketCreationEvent(id: Long) {
+        forkJoinPool.execute {
+            listeners.forEach {
+                it.onBucketCreation(id)
+            }
+        }
+    }
+
+    /**
      * Build a new RateLimiter instance
      *
-     * @param quota             The number of events allowed within the time period
-     * @param expirationTime    Bucket life time
-     * @param unit              Bucket life time unit
-     * @param executor          ScheduledExecutorServices used so that each bucket can self-delete itself
+     * @author BladeMaker
      */
     class Builder {
         private var quota: Int = 45
         private var expirationTime: Long = 60L
         private var unit: TimeUnit = TimeUnit.SECONDS
         private var executor: ScheduledExecutorService? = null
+        private val listeners = mutableListOf<ListenerAdapter>()
 
         fun setQuota(quota: Int): Builder {
             this.quota = quota
@@ -56,10 +81,15 @@ class RateLimiter private constructor(
             return this
         }
 
+        fun addListener(listener: ListenerAdapter): Builder {
+            listeners.add(listener)
+            return this
+        }
+
         fun build(): RateLimiter {
             if (executor == null) executor = Executors.newSingleThreadScheduledExecutor(ThreadFactoryBuilder())
 
-            return RateLimiter(executor!!, quota, expirationTime, unit)
+            return RateLimiter(executor!!, quota, expirationTime, unit, listeners)
         }
     }
 }

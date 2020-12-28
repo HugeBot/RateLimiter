@@ -16,6 +16,7 @@ data class Bucket(
     private var count: AtomicInteger = AtomicInteger(0)
 
     init {
+        limiter.emitBucketCreationEvent(key)
         executor.schedule({
             try {
                 if (store.containsKey(key)) store.remove(key)
@@ -31,6 +32,7 @@ data class Bucket(
         if (exceded) return true
 
         if (count.incrementAndGet() >= quota) {
+            limiter.emitBucketExceededEvent(key)
             exceded = true
             return true
         }
